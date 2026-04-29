@@ -1,0 +1,33 @@
+apiVersion: argorproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app2-httpd
+  namespace: argocd
+  labels:
+    app: app2-httpd
+    environment: pre
+    cluster: aro01-pre
+spec:
+  project: aro01-pre.argocd-project
+  source:
+    repoURL: https://github.com/cvinaste/app2-httpd.git
+    targetRevision: main
+    path: k8s
+    directory:
+      recurse: true # Permite buscar en subdirectorios
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: app2-httpd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  syncOptions:
+    - CreateNamespace=true  # Crea el namespace si no existe  
+  retry:
+    limit: 5
+    backoff:
+      duration: 5s
+      factor: 2
+      maxDuration: 1m
+  revisionHistoryLimit: 5
