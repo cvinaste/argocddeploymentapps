@@ -3,11 +3,7 @@ kind: ApplicationSet
 metadata:
   name: aro01-pre.deploymentapps
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"  # Sincroniza antes que otras aplicaciones
 spec:
-  syncPolicy:
-    applicationSync: create-update
   # Generador de lista: define las apps que queremos crear
   generators:
     - git:
@@ -33,16 +29,9 @@ spec:
       source:
         repoURL: '{{repoURL}}'              # URL del repo (viene del generador)
         targetRevision: '{{branch}}'        # rama (viene del generador)
-        path: '{{path.path}}'                             # raíz del repo (donde están los YAMLs)
+        path: '{{path}}'                             # raíz del repo (donde están los YAMLs)
       
       # Destination: dónde desplegar
       destination:
         server: https://kubernetes.default.svc
-        name: 'aro01-pre-cluster'  # Nombre del cluster en ArgoCD
         namespace: default
-      
-      # Sync policy: política de sincronización automática
-      syncPolicy:
-        automated:
-          prune: true      # Elimina recursos que ya no están en el repo
-          selfHeal: true   # Auto-sincroniza si hay cambios en el cluster
