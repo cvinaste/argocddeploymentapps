@@ -1,10 +1,10 @@
 apiVersion: argorproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app1-nginx
+  name: nginx
   namespace: argocd
   labels:
-    app: app1-nginx
+    app: nginx
     environment: test
     cluster: local
 spec:
@@ -17,7 +17,7 @@ spec:
       recurse: true # Permite buscar en subdirectorios
   destination:
     server: https://kubernetes.default.svc
-    namespace: app1-nginx
+    namespace: nginx
   syncPolicy:
     automated:
       prune: true
