@@ -3,11 +3,11 @@ kind: ApplicationSet
 metadata:
   name: local-test.deploymentapps
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"  # Sincroniza antes que otras aplicaciones
+#  annotations:
+#    argocd.argoproj.io/sync-wave: "1"  # Sincroniza antes que otras aplicaciones
 spec:
   syncPolicy:
-    applicationsSync: create-update
+    #applicationsSync: create-update
     preserveResourcesOnDeletion: false  # No preserva los recursos al eliminar la app 
   generators:
     - git:
@@ -20,13 +20,10 @@ spec:
     metadata:
       name: "{{path[1]}}"
       namespace: argocd
-      finalizers:
-        - resources-finalizer.argocd-argoproj.io
       labels:
         app.argoproj.io/application-set-name: local-test.deploymentapps
         cluster: aro01-pre
         managed-by: applicationset
-    
     spec:
       project: default  # Proyecto de ArgoCD donde se crean las aplicaciones
       # Source: de dónde obtiene los manifiestos K8s
