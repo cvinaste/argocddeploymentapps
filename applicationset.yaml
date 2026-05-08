@@ -29,8 +29,8 @@ spec:
       # Source: de dónde obtiene los manifiestos K8s
       source:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git    # URL del repo (viene del generador)
-        targetRevision: "{{branch}}"        # rama (viene del generador)
-        path: "{{path}}"                    # raíz del repo (donde están los YAMLs)
+        targetRevision: main
+        path: "{{path}}"            # raíz del repo (donde están los YAMLs)
       
       # Destination: dónde desplegar
       destination:
