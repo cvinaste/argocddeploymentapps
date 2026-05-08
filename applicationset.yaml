@@ -10,12 +10,12 @@ spec:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/app1-nginx/application.yaml"  # Busca archivos application.yaml en subcarpetas
+          - path: "aro01-pre/*/application.yaml"  # Busca archivos application.yaml en subcarpetas
 
   # Template: define cómo se crean las Applications
   template:
     metadata:
-      name: '{{path[1]}}'
+      name: "{{path[1]}}"
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: aro01-pre.deploymentapps
