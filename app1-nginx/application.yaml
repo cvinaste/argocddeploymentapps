@@ -5,8 +5,8 @@ metadata:
   namespace: argocd
   labels:
     app: app1-nginx
-    environment: pre
-    cluster: aro01-pre
+    environment: test
+    cluster: local
 spec:
   project: aro01-pre.argocd-project
   source:
@@ -27,7 +27,7 @@ spec:
   retry:
     limit: 5
     backoff:
-      duration: 5s
+      duration: 30s
       factor: 2
-      maxDuration: 1m
-  revisionHistoryLimit: 5
+      maxDuration: 10m
+  revisionHistoryLimit: 3

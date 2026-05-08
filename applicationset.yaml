@@ -1,42 +1,44 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: apps
+  name: aro01-pre.deploymentapps
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"  # Sincroniza antes que otras aplicaciones
 spec:
+  syncPolicy:
+    applicationSync: create-update
   # Generador de lista: define las apps que queremos crear
   generators:
-    - list:
-        elements:
-          # App 1: nginx desde repositorio en GitHub
-          - name: app1-nginx
-            repoURL: https://github.com/cvinaste/app1-nginx.git
-            branch: main
-          # App 2: httpd desde repositorio en GitHub
-          - name: app2-httpd
-            repoURL: https://github.com/cvinaste/app2-httpd.git
-            branch: main
+    - git:
+        repoURL: https://github.com/cvinaste/argocddeploymentapps.git
+        revision: main
+        files:
+          - path: "aro01-pre/app1-nginx/application.yaml"  # Busca archivos application.yaml en subcarpetas
 
   # Template: define cómo se crean las Applications
   template:
     metadata:
-      name: '{{name}}'
+      name: '{{path[1]}}'
       namespace: argocd
-      finalizers:
-        - resources-finalizer.argocd-argoproj.io
+      labels:
+        app.argoproj.io/application-set-name: aro01-pre.deploymentapps
+        cluster: aro01-pre
+        managed-by: applicationset
     
     spec:
-      project: default
+      project: aro01-pre.argocd-project  # Proyecto de ArgoCD donde se crean las aplicaciones
       
       # Source: de dónde obtiene los manifiestos K8s
       source:
         repoURL: '{{repoURL}}'              # URL del repo (viene del generador)
         targetRevision: '{{branch}}'        # rama (viene del generador)
-        path: .                             # raíz del repo (donde están los YAMLs)
+        path: '{{path.path}}'                             # raíz del repo (donde están los YAMLs)
       
       # Destination: dónde desplegar
       destination:
         server: https://kubernetes.default.svc
+        name: 'aro01-pre-cluster'  # Nombre del cluster en ArgoCD
         namespace: default
       
       # Sync policy: política de sincronización automática
@@ -44,5 +46,3 @@ spec:
         automated:
           prune: true      # Elimina recursos que ya no están en el repo
           selfHeal: true   # Auto-sincroniza si hay cambios en el cluster
-        syncOptions:
-          - CreateNamespace=true  # Crea el namespace si no existe
