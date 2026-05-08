@@ -29,7 +29,7 @@ spec:
         managed-by: applicationset
     
     spec:
-      project: ldefault  # Proyecto de ArgoCD donde se crean las aplicaciones
+      project: default  # Proyecto de ArgoCD donde se crean las aplicaciones
       # Source: de dónde obtiene los manifiestos K8s
       source:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git    # URL del repo (viene del generador)

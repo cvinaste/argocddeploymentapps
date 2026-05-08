@@ -8,7 +8,7 @@ metadata:
     environment: test
     cluster: local
 spec:
-  project: aro01-pre.argocd-project
+  project: default
   source:
     repoURL: https://github.com/cvinaste/app1-nginx.git
     targetRevision: main
