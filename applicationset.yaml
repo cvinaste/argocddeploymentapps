@@ -4,8 +4,7 @@ metadata:
   name: local-test.deploymentapps
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "0"  # Sincroniza antes que otras aplicaciones
-    argocd.argoproj.io/sync-options: "CreateNamespace=true"  # Crea el namespace si no existe
+    argocd.argoproj.io/sync-wave: "1"  # Sincroniza antes que otras aplicaciones
 spec:
   syncPolicy:
     applicationsSync: create-update
