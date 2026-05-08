@@ -3,7 +3,7 @@ kind: ApplicationSet
 metadata:
   name: local-test.deploymentapps
   namespace: argocd
-  annootations:
+  annotations:
     argocd.argoproj.io/sync-wave: "0"  # Sincroniza antes que otras aplicaciones
     argocd.argoproj.io/sync-options: "CreateNamespace=true"  # Crea el namespace si no existe
 spec:
