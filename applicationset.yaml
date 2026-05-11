@@ -18,21 +18,37 @@ spec:
   # Template: define cómo se crean las Applications
   template:
     metadata:
-      name: "{{path[1]}}"
+      name: "{{metadata.name}}"
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test.deploymentapps
-        cluster: aro01-pre
+        cluster: "{{metadata.labels.cluster}}"  # Etiqueta del cluster (viene del generador)
+        environment: "{{metadata.labels.environment}}"  # Etiqueta del entorno (viene del gener
+        app: "{{metadata.labels.app}}"  # Etiqueta de la aplicación (viene del generador)
         managed-by: applicationset
     spec:
-      project: default  # Proyecto de ArgoCD donde se crean las aplicaciones
+      project: "{{spec.project}}"  # Proyecto de ArgoCD donde se crean las aplicaciones
       # Source: de dónde obtiene los manifiestos K8s
       source:
-        repoURL: https://github.com/cvinaste/argocddeploymentapps.git    # URL del repo (viene del generador)
-        targetRevision: main
-        path: "{{path}}"            # raíz del repo (donde están los YAMLs)
+        repoURL: "{{spec.source.repoURL}}"   # URL del repo (viene del generador)
+        targetRevision: "{{spec.source.targetRevision}}"  # Revisión objetivo (viene del generador)
+        path: "{{spec.source.path}}"            # raíz del repo (donde están los YAMLs)
+        directory:
+          recurse: true  # Permite buscar en subdirectorios
       
       # Destination: dónde desplegar
       destination:
-        server: https://kubernetes.default.svc
-        namespace: argocd
+        server: "{{spec.destination.server}}"  # URL del cluster de destino (viene del generador)
+        namespace: "{{spec.destination.namespace}}"  # Namespace de destino (viene del generador)
+      syncPolicy:
+        automated:
+          prune: true  # Elimina recursos que ya no están en el repo
+          selfHeal: true  # Repara recursos que han sido modificados manualmente
+        syncOptions:
+          - CreateNamespace=true  # Crea el namespace si no existe
+        retry:
+          limit: 5  # Número máximo de reintentos en caso de fallo
+          backoff:
+            duration: "30s"  # Tiempo de espera entre reintentos
+            factor: 2  # Factor de multiplicación para el tiempo de espera
+            maxDuration: "10m"  # Tiempo máximo de espera entre reintentos 
