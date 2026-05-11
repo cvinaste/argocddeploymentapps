@@ -50,5 +50,7 @@ spec:
             duration: "30s"  # Tiempo de espera entre reintentos
             factor: 2  # Factor de multiplicación para el tiempo de espera
             maxDuration: "10m"  # Tiempo máximo de espera entre reintentos 
+        syncOptions:
+          - CreateNamespace=true  # Crea el namespace si no existe
 
       revisionHistoryLimit: 3  # Limita el número de revisiones almacenadas para esta aplicación
