@@ -44,11 +44,11 @@ spec:
         automated:
           prune: true  # Elimina recursos que ya no están en el repo
           selfHeal: true  # Repara recursos que han sido modificados manualmente
-        syncOptions:
-          - CreateNamespace=true  # Crea el namespace si no existe
         retry:
           limit: 5  # Número máximo de reintentos en caso de fallo
           backoff:
             duration: "30s"  # Tiempo de espera entre reintentos
             factor: 2  # Factor de multiplicación para el tiempo de espera
             maxDuration: "10m"  # Tiempo máximo de espera entre reintentos 
+
+      revisionHistoryLimit: 3  # Limita el número de revisiones almacenadas para esta aplicación

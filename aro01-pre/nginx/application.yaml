@@ -1,4 +1,4 @@
-apiVersion: argorproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nginx
@@ -13,21 +13,8 @@ spec:
     repoURL: https://github.com/cvinaste/app1-nginx.git
     targetRevision: main
     path: k8s
-    directory:
-      recurse: true # Permite buscar en subdirectorios
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-  syncOptions:
-    - CreateNamespace=true  # Crea el namespace si no existe  
-  retry:
-    limit: 5
-    backoff:
-      duration: 30s
-      factor: 2
-      maxDuration: 10m
-  revisionHistoryLimit: 3
+  syncOp tions:
+    - CreateNamespace=true
