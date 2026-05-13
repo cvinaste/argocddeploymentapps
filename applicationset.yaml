@@ -12,28 +12,25 @@ spec:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/*/application.yaml"
+          - path: "aro01-pre/nginx/application.yaml"
   template:
     metadata:
-      name: "{{metadata.name}}"
+      name: nginx
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test-deploymentapps
         managed-by: applicationset
-        cluster: "{{metadata.labels.cluster}}"
-        environment: "{{metadata.labels.environment}}"
-        app: "{{metadata.labels.app}}"
     spec:
-      project: "{{spec.project}}"
+      project: default
       source:
-        repoURL: "{{spec.source.repoURL}}"
-        targetRevision: "{{spec.source.targetRevision}}"
-        path: "{{spec.source.path}}"
+        repoURL: https://github.com/cvinaste/app1-nginx.git
+        targetRevision: main
+        path: k8s
         directory:
           recurse: true
       destination:
-        server: "{{spec.destination.server}}"
-        namespace: "{{spec.metadata.name}}"  # ⚠ se puede usar el nombre de la app si quieres
+        server: https://kubernetes.default.svc
+        namespace: nginx
       syncPolicy:
         automated:
           prune: true
@@ -45,5 +42,5 @@ spec:
             factor: 2
             maxDuration: "10m"
         syncOptions:
-          - CreateNamespace=false  # ya creamos los namespaces manualmente
+          - CreateNamespace=true
       revisionHistoryLimit: 3
