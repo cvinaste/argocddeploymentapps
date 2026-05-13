@@ -1,9 +1,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-1
+  name: nginx
   labels:
-    app: nginx-1
+    app: nginx
     environment: test
     cluster: local
 spec:
@@ -14,4 +14,4 @@ spec:
     path: k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: nginx-1
+    namespace: nginx
