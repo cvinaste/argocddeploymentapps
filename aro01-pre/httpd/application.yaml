@@ -6,7 +6,6 @@ metadata:
     app: httpd
     environment: test
     cluster: local
-    namespace: httpd
 spec:
   project: default
   source:
