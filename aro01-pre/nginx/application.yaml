@@ -3,6 +3,7 @@ kind: Application
 metadata:
   name: nginx
   labels:
+    type: yaml
     app: nginx
     environment: test
     cluster: local
