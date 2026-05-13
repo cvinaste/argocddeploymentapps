@@ -1,0 +1,90 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: local-test-deploymentapps
+  namespace: argocd
+spec:
+  syncPolicy:
+    applicationsSync: sync
+    preserveResourcesOnDeletion: false
+
+  # Generador Git que lee todos los application.yaml en subcarpetas
+  generators:
+    - git:
+        repoURL: https://github.com/cvinaste/argocddeploymentapps.git
+        revision: main
+        files:
+          - path: "aro01-pre/*/application.yaml"
+
+  # Múltiples plantillas
+  templates:
+
+    # ===== Plantilla para apps YAML =====
+    - metadata:
+        name: "{{metadata.name}}"
+        namespace: argocd
+        labels:
+          app.argoproj.io/application-set-name: local-test-deploymentapps
+          managed-by: applicationset
+          type: yaml
+      spec:
+        project: default
+        source:
+          repoURL: "{{spec.source.repoURL}}"
+          targetRevision: "{{spec.source.targetRevision}}"
+          path: "{{spec.source.path}}"
+          directory:
+            recurse: true
+        destination:
+          server: "{{spec.destination.server}}"
+          namespace: "{{spec.destination.namespace}}"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          retry:
+            limit: 5
+            backoff:
+              duration: "30s"
+              factor: 2
+              maxDuration: "10m"
+          syncOptions:
+            - CreateNamespace=true
+        revisionHistoryLimit: 3
+      # Solo aplica a apps YAML
+      when: "{{metadata.labels.type}} == 'yaml'"
+
+    # ===== Plantilla para apps Helm =====
+    - metadata:
+        name: "{{metadata.name}}"
+        namespace: argocd
+        labels:
+          app.argoproj.io/application-set-name: local-test-deploymentapps
+          managed-by: applicationset
+          type: helm
+      spec:
+        project: default
+        source:
+          repoURL: "{{spec.source.repoURL}}"
+          chart: "{{spec.source.chart}}"             # hereda nombre de chart del app
+          targetRevision: "{{spec.source.targetRevision}}"
+          helm:
+            values: "{{spec.source.helm.values}}"    # valores custom de Helm
+        destination:
+          server: "{{spec.destination.server}}"
+          namespace: "{{spec.destination.namespace}}"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          retry:
+            limit: 5
+            backoff:
+              duration: "30s"
+              factor: 2
+              maxDuration: "10m"
+          syncOptions:
+            - CreateNamespace=true
+        revisionHistoryLimit: 3
+      # Solo aplica a apps Helm
+      when: "{{metadata.labels.type}} == 'helm'"
