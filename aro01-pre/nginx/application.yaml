@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: httpd
+  name: nginx
   labels:
-    app: httpd
+    app: nginx
     environment: test
     cluster: local
 spec:
   project: default
   source:
-    repoURL: https://github.com/cvinaste/app2-httpd.git
+    repoURL: https://github.com/cvinaste/app1-nginx.git
     targetRevision: main
     path: k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: httpd
+    namespace: nginx
