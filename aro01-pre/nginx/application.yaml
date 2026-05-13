@@ -2,7 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: nginx
-  namespace: nginx
   labels:
     app: nginx
     environment: test
@@ -16,5 +15,3 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx
-  syncOp tions:
-    - CreateNamespace=true

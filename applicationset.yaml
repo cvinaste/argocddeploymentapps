@@ -1,56 +1,45 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: local-test.deploymentapps
+  name: local-test-deploymentapps
   namespace: argocd
-#  annotations:
-#    argocd.argoproj.io/sync-wave: "1"  # Sincroniza antes que otras aplicaciones
 spec:
   syncPolicy:
-    applicationsSync: sync  # Sincroniza las aplicaciones generadas automáticamente
-    preserveResourcesOnDeletion: false  # No preserva los recursos al eliminar la app 
+    applicationsSync: sync
+    preserveResourcesOnDeletion: false
   generators:
     - git:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/*/application.yaml"  # Busca archivos application.yaml en subcarpetas
-  # Template: define cómo se crean las Applications
+          - path: "aro01-pre/*/application.yaml"  # busca todas las aplicaciones
   template:
     metadata:
-      name: "{{metadata.name}}"
       namespace: argocd
       labels:
-        app.argoproj.io/application-set-name: local-test.deploymentapps
-        cluster: "{{metadata.labels.cluster}}"  # Etiqueta del cluster (viene del generador)
-        environment: "{{metadata.labels.environment}}"  # Etiqueta del entorno (viene del gener
-        app: "{{metadata.labels.app}}"  # Etiqueta de la aplicación (viene del generador)
+        app.argoproj.io/application-set-name: local-test-deploymentapps
         managed-by: applicationset
     spec:
-      project: "{{spec.project}}"  # Proyecto de ArgoCD donde se crean las aplicaciones
-      # Source: de dónde obtiene los manifiestos K8s
+      project: default
       source:
-        repoURL: "{{spec.source.repoURL}}"   # URL del repo (viene del generador)
-        targetRevision: "{{spec.source.targetRevision}}"  # Revisión objetivo (viene del generador)
-        path: "{{spec.source.path}}"            # raíz del repo (donde están los YAMLs)
+        repoURL: "{{spec.source.repoURL}}"            # tomado de cada Application
+        targetRevision: "{{spec.source.targetRevision}}"  # tomado de cada Application
+        path: "{{spec.source.path}}"                  # tomado de cada Application
         directory:
-          recurse: true  # Permite buscar en subdirectorios
-      
-      # Destination: dónde desplegar
+          recurse: true
       destination:
-        server: "{{spec.destination.server}}"  # URL del cluster de destino (viene del generador)
-        namespace: "{{spec.destination.namespace}}"  # Namespace de destino (viene del generador)
+        server: "{{spec.destination.server}}"        # tomado de cada Application
+        namespace: "{{spec.destination.namespace}}"  # tomado de cada Application
       syncPolicy:
         automated:
-          prune: true  # Elimina recursos que ya no están en el repo
-          selfHeal: true  # Repara recursos que han sido modificados manualmente
+          prune: true
+          selfHeal: true
         retry:
-          limit: 5  # Número máximo de reintentos en caso de fallo
+          limit: 5
           backoff:
-            duration: "30s"  # Tiempo de espera entre reintentos
-            factor: 2  # Factor de multiplicación para el tiempo de espera
-            maxDuration: "10m"  # Tiempo máximo de espera entre reintentos 
+            duration: "30s"
+            factor: 2
+            maxDuration: "10m"
         syncOptions:
-          - CreateNamespace=true  # Crea el namespace si no existe
-
-      revisionHistoryLimit: 3  # Limita el número de revisiones almacenadas para esta aplicación
+          - CreateNamespace=true
+      revisionHistoryLimit: 3
