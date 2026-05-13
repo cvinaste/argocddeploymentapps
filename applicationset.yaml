@@ -7,36 +7,30 @@ spec:
   syncPolicy:
     applicationsSync: sync
     preserveResourcesOnDeletion: false
-
-  # Generador: git
   generators:
     - git:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/*/application.yaml"   # recoge todos los application.yaml en subcarpetas
-
+          - path: "aro01-pre/*/application.yaml"
   template:
     metadata:
-      name: "{{metadata.name}}"                   # hereda nombre de application.yaml
-      namespace: argocd                           # todas las Applications viviran en argocd
+      name: nginx
+      namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test-deploymentapps
         managed-by: applicationset
-        app: "{{metadata.labels.app}}"           # hereda etiqueta 'app'
-        environment: "{{metadata.labels.environment}}" # hereda etiqueta 'environment'
-        cluster: "{{metadata.labels.cluster}}"   # hereda etiqueta 'cluster'
     spec:
-      project: "{{spec.project}}"                 # hereda el proyecto
+      project: default
       source:
-        repoURL: "{{spec.source.repoURL}}"       # hereda repo
-        targetRevision: "{{spec.source.targetRevision}}" # hereda rama/tag
-        path: "{{spec.source.path}}"             # hereda path
+        repoURL: https://github.com/cvinaste/app1-nginx.git
+        targetRevision: main
+        path: k8s
         directory:
           recurse: true
       destination:
-        server: "{{spec.destination.server}}"   # hereda cluster
-        namespace: "{{spec.destination.namespace}}" # hereda namespace de cada app
+        server: https://kubernetes.default.svc
+        namespace: nginx
       syncPolicy:
         automated:
           prune: true
@@ -48,5 +42,5 @@ spec:
             factor: 2
             maxDuration: "10m"
         syncOptions:
-          - CreateNamespace=false  # debes crear los namespaces a mano
+          - CreateNamespace=true
       revisionHistoryLimit: 3
