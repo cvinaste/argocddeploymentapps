@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/cvinaste/app1-nginx.git
+    repoURL: https://github.com/cvinaste/app2-httpd.git
     targetRevision: main
     path: k8s
   destination:
