@@ -15,7 +15,7 @@ spec:
           - path: "aro01-pre/*/application.yaml"
   template:
     metadata:
-      name: nginx
+      name: '{{metadata.name}}'
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test-deploymentapps
@@ -23,14 +23,15 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/cvinaste/app1-nginx.git
-        targetRevision: main
-        path: k8s
+      source:
+        repoURL: "{{spec.source.repoURL}}"       # hereda repo
+        targetRevision: "{{spec.source.targetRevision}}" # hereda rama/tag
+        path: "{{spec.source.path}}"             # hereda path
         directory:
           recurse: true
       destination:
-        server: https://kubernetes.default.svc
-        namespace: nginx
+        server: "{{spec.destination.server}}"   # hereda cluster
+        namespace: "{{spec.destination.namespace}}" # hereda namespace de cada app
       syncPolicy:
         automated:
           prune: true
