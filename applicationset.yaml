@@ -12,28 +12,28 @@ spec:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/*/application.yaml"  # busca todos los application.yaml en subcarpetas
+          - path: "aro01-pre/*/application.yaml"   # detecta todas las apps
   template:
     metadata:
-      name: "{{metadata.name}}"               # usa el nombre de cada Application del repo
+      name: "{{metadata.name}}"                   # toma el nombre de cada app
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test-deploymentapps
         managed-by: applicationset
-        cluster: "{{metadata.labels.cluster}}"       # etiqueta que venga de cada Application
+        cluster: "{{metadata.labels.cluster}}"
         environment: "{{metadata.labels.environment}}"
         app: "{{metadata.labels.app}}"
     spec:
-      project: "{{spec.project}}"               # del Application original
+      project: "{{spec.project}}"                 # del Application original
       source:
-        repoURL: "{{spec.source.repoURL}}"       # del Application original
+        repoURL: "{{spec.source.repoURL}}"
         targetRevision: "{{spec.source.targetRevision}}"
         path: "{{spec.source.path}}"
         directory:
           recurse: true
       destination:
-        server: "{{spec.destination.server}}"   # del Application original
-        namespace: "{{spec.destination.namespace}}"
+        server: "{{spec.destination.server}}"
+        namespace: "{{metadata.labels.namespace}}"   # ⚠ usa la etiqueta namespace
       syncPolicy:
         automated:
           prune: true
