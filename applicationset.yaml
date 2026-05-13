@@ -12,9 +12,10 @@ spec:
         repoURL: https://github.com/cvinaste/argocddeploymentapps.git
         revision: main
         files:
-          - path: "aro01-pre/*/application.yaml"  # busca todas las aplicaciones
+          - path: "aro01-pre/nginx/application.yaml"
   template:
     metadata:
+      name: nginx
       namespace: argocd
       labels:
         app.argoproj.io/application-set-name: local-test-deploymentapps
@@ -22,14 +23,14 @@ spec:
     spec:
       project: default
       source:
-        repoURL: "{{spec.source.repoURL}}"            # tomado de cada Application
-        targetRevision: "{{spec.source.targetRevision}}"  # tomado de cada Application
-        path: "{{spec.source.path}}"                  # tomado de cada Application
+        repoURL: https://github.com/cvinaste/app1-nginx.git
+        targetRevision: main
+        path: k8s
         directory:
           recurse: true
       destination:
-        server: "{{spec.destination.server}}"        # tomado de cada Application
-        namespace: "{{spec.destination.namespace}}"  # tomado de cada Application
+        server: https://kubernetes.default.svc
+        namespace: nginx
       syncPolicy:
         automated:
           prune: true
